@@ -1,0 +1,9 @@
+django
+djangorestframework
+mysqlclient
+django-cors-headers
+djangorestframework-jwt
+python-decouple
+elasticsearch
+pandas
+numpy
