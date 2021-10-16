@@ -1,0 +1,1 @@
+web: waitress-serve --port=$PORT qaulity_works.wsgi:application

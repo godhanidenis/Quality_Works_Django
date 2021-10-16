@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -55,7 +56,8 @@ ROOT_URLCONF = 'qaulity_works.urls'
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    "http://192.168.1.3:8000"
+    "http://192.168.1.3:8000",
+    "http://0.0.0.0:3000"
 )
 CORS_ALLOW_CREDENTIALS = True
 
@@ -132,3 +134,4 @@ REST_FRAMEWORK={
     # ),
 }
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
