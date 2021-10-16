@@ -106,7 +106,8 @@ class Showlob(ViewSet):
 class Showreporting(ViewSet):
     permission_classes=[AllowAny,]
     def list(self,request,format=None):
-        datas=Reporting.objects.filter(User__id=request.user.id).all()
+        # datas=Reporting.objects.filter(User__id=request.user.id).all()
+        datas=Reporting.objects.all()
         serializer=Reportingserializer(datas, many=True)
         r=rh.ResponseMsg(data=serializer.data,error=False,msg="ALL Reporting data shows")
         return Response(r.response)
@@ -128,3 +129,4 @@ class Showagent(ViewSet):
         serializer=Agentserializer(datas, many=True)
         r=rh.ResponseMsg(data=serializer.data,error=False,msg="Agent data show")
         return Response(r.response)    
+

@@ -44,6 +44,15 @@ class SOPTypesserializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class Reportingserializer(serializers.ModelSerializer):
+    label=serializers.SerializerMethodField('get_agentname_from_Agent')
+    value=serializers.SerializerMethodField('get_value_from_Agent')
     class Meta:
         model=Reporting
-        fields = "__all__"
+        fields = ['id','Matrix_type','User','Weights','label','value']
+
+    def get_agentname_from_Agent(self, matrix):
+        label=matrix.Matrix_type
+        return label
+    def get_value_from_Agent(self, matrix):
+        value=matrix.id
+        return value
