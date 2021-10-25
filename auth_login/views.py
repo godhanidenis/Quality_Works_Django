@@ -67,7 +67,6 @@ def refresh_token_view(request):
     return Response(r.response)
 
 class ShowteamView(ViewSet):
-    permission_classes=[AllowAny,]
     def create(self, request, format=None):
         id=request.data.get('id')
         # datas=Teams.objects.filter(LOB__id=id, LOB__User__id=request.user.id).all()
@@ -77,7 +76,6 @@ class ShowteamView(ViewSet):
         return Response(r.response)
            
 class ShowagentView(ViewSet):
-    permission_classes=[AllowAny,]
     def create(self, request, format=None):
         id=request.data.get('id')
         # id=json.loads(id)
@@ -87,7 +85,6 @@ class ShowagentView(ViewSet):
         return Response(r.response)
 
 class Showsoptypes(ViewSet):
-    permission_classes=[AllowAny,]
     def list(self,request,format=None):
         obj=SOP_Types.objects.all()
         serializer= SOPTypesserializer(obj, many=True)
@@ -95,7 +92,6 @@ class Showsoptypes(ViewSet):
         return Response(r.response)
 
 class Showlob(ViewSet):
-    permission_classes=[AllowAny,]
     def list(self,request,format=None):
         # obj=LOB.objects.filter(User__id=request.user.id)
         obj=LOB.objects.all()
@@ -104,7 +100,6 @@ class Showlob(ViewSet):
         return Response(r.response)
 
 class Showreporting(ViewSet):
-    permission_classes=[AllowAny,]
     def list(self,request,format=None):
         # datas=Reporting.objects.filter(User__id=request.user.id).all()
         datas=Reporting.objects.all()
@@ -113,7 +108,6 @@ class Showreporting(ViewSet):
         return Response(r.response)
 
 class Showall(ViewSet):
-    permission_classes=[AllowAny,]
     def create(self,request,format=None):
         id=request.data.get('Team_Ids')
         datas=Teams.objects.filter(id__in=id)
@@ -122,7 +116,6 @@ class Showall(ViewSet):
         return Response(r.response)
 
 class Showagent(ViewSet):
-    permission_classes=[AllowAny,]
     def create(self,request,format=None):
         id=request.data.get('Agent_Ids')
         datas=Agents.objects.filter(id__in=id)

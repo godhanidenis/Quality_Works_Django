@@ -118,20 +118,17 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-
-
 REST_FRAMEWORK={
     'EXCEPTION_HANDLER': 'utils.exception_handler.custom_exception_handler',
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #      'rest_framework.permissions.IsAuthenticated',
-    #      ],
-    # 'DEFAULT_AUTHENTICATION_CLASSES': (
-    #     'auth_login.utils.authentication.SafeJWTAuthentication',
-    # ),
+    'DEFAULT_PERMISSION_CLASSES': [
+         'rest_framework.permissions.IsAuthenticated',
+         ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'auth_login.utils.authentication.SafeJWTAuthentication',
+    ),
 }
 
 STATIC_URL = '/static/'
