@@ -4,9 +4,17 @@ from .models import *
 
 
 class LOBserializer(serializers.ModelSerializer):
+    label=serializers.SerializerMethodField('get_lobname_from_lob')
+    value=serializers.SerializerMethodField('get_value_from_lob')
     class Meta:
         model=LOB
-        fields = "__all__"
+        fields = ['id','User','Lob_name','label','value']
+    def get_lobname_from_lob(self, lob):
+        label=lob.Lob_name
+        return label
+    def get_value_from_lob(self, lob):
+        value=lob.id
+        return value
 
 class Teamserializer(serializers.ModelSerializer):
     LOB=LOBserializer()

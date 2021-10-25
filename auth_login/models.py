@@ -53,6 +53,7 @@ class Agents(models.Model):
         verbose_name_plural = 'Agents'
 
 class SOP_Types(models.Model):
+    User=models.ForeignKey(User, related_name="sop_types_user", on_delete=models.CASCADE)
     Sop_name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -63,9 +64,11 @@ class SOP_Types(models.Model):
         verbose_name_plural = 'SOP_Types'
 
 class SOP(models.Model):
-    Team= models.ForeignKey(Teams, related_name='Teams_for_sop', on_delete=models.CASCADE)
     Sop_types= models.ForeignKey(SOP_Types, related_name='Sop_types', on_delete=models.CASCADE)
+    Sop_sub_type=models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.Sop_sub_type
     class Meta:
         verbose_name='SOP'
         verbose_name_plural = 'SOPs' 
