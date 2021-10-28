@@ -2,7 +2,6 @@ from django.db.models import fields
 from rest_framework import serializers
 from .models import *
 
-
 class LOBserializer(serializers.ModelSerializer):
     label=serializers.SerializerMethodField('get_lobname_from_lob')
     value=serializers.SerializerMethodField('get_value_from_lob')
@@ -45,11 +44,6 @@ class Agentserializer(serializers.ModelSerializer):
     def get_value_from_Agent(self, agent):
         value=agent.id
         return value
-        
-class SOPTypesserializer(serializers.ModelSerializer):
-    class Meta:
-        model=SOP_Types
-        fields = "__all__"
 
 class Reportingserializer(serializers.ModelSerializer):
     label=serializers.SerializerMethodField('get_agentname_from_Agent')
@@ -64,3 +58,14 @@ class Reportingserializer(serializers.ModelSerializer):
     def get_value_from_Agent(self, matrix):
         value=matrix.id
         return value
+
+class SOPserializer(serializers.ModelSerializer):
+    class Meta:
+        model=SOP
+        fields='__all__'
+
+class SOPTypesserializer(serializers.ModelSerializer):
+    Sop_sub_types=SOPserializer(many=True)
+    class Meta:
+        model=SOP_Types
+        fields = ['id','User','Sop_name','Sop_sub_types']

@@ -64,7 +64,7 @@ class SOP_Types(models.Model):
         verbose_name_plural = 'SOP_Types'
 
 class SOP(models.Model):
-    Sop_types= models.ForeignKey(SOP_Types, related_name='Sop_types', on_delete=models.CASCADE)
+    Sop_types= models.ForeignKey(SOP_Types, related_name='Sop_sub_types', on_delete=models.CASCADE)
     Sop_sub_type=models.CharField(max_length=100)
 
     def __str__(self):

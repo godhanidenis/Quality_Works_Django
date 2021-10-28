@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'rest_framework_xml',
     'auth_login',
     'elastic_search'
 ]
@@ -53,7 +54,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'qaulity_works.urls'
 # CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = (
+CORS_ALLOWED_ORIGINS = (
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     "http://3.227.180.10",
@@ -122,12 +123,12 @@ USE_TZ = True
 
 REST_FRAMEWORK={
     'EXCEPTION_HANDLER': 'utils.exception_handler.custom_exception_handler',
-    'DEFAULT_PERMISSION_CLASSES': [
-         'rest_framework.permissions.IsAuthenticated',
-         ],
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'auth_login.utils.authentication.SafeJWTAuthentication',
-    ),
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #      'rest_framework.permissions.IsAuthenticated',
+    #      ],
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #     'auth_login.utils.authentication.SafeJWTAuthentication',
+    # ),
 }
 
 STATIC_URL = '/static/'

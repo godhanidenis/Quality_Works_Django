@@ -6,12 +6,14 @@ from django.urls.conf import include
 router=DefaultRouter()
 
 router.register('showteam', ShowteamView, basename='showteam')
+router.register('createteam', CreateteamView, basename='createteam')
 router.register('showagent', ShowagentView, basename='showagent')
 router.register('soptypes', Showsoptypes, basename='soptypes')
 router.register('lob', Showlob, basename='lob')
 router.register('reporting', Showreporting, basename='reporting')
 router.register('allteam', Showall, basename='allteam')
 router.register('allagent', Showagent, basename='allagent')
+router.register('subsop', Showsubsop, basename='subsop')
 
 urlpatterns = [
     path('login/', loginview, name='Login'),

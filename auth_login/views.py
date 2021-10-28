@@ -1,3 +1,4 @@
+from functools import partial
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
@@ -26,7 +27,7 @@ def loginview(request):
         access_token = token.generate_access_token(user)
         refresh_token = token.generate_refresh_token(user)
         response = Response()
-        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, max_age=7*24*60*60)
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, max_age=7*24*60*60, samesite= None, secure=True)
         response.data = {
         "error":False,
         "data":{
@@ -70,11 +71,23 @@ class ShowteamView(ViewSet):
     def create(self, request, format=None):
         id=request.data.get('id')
         # datas=Teams.objects.filter(LOB__id=id, LOB__User__id=request.user.id).all()
-        datas=Teams.objects.filter(LOB__id=id).all()
+        datas=Teams.objects.filter(LOB__id=id, LOB__User__id=1).all()
         serializer=Teamserializer(datas, many=True)
         r=rh.ResponseMsg(data=serializer.data,error=False,msg="Teams data show")
         return Response(r.response)
            
+class CreateteamView(ViewSet):
+    def create(self, request, format=None):
+        team_name=request.data.get("team_name")
+        no_agents=request.data.get("no_agents")
+        locations=request.data.get("locations")
+        reporting_manager_id=request.data.get("reporting_manager_id")
+        lob_id=request.data.get("lob_id")
+        new_obj=Teams(Team_name=team_name,No_agentns=no_agents,Locations=locations,Reporting_Manager_id=reporting_manager_id,LOB_id=lob_id)
+        new_obj.save()
+        r=rh.ResponseMsg(data={},error=False,msg="New Team Create Successfully!!")
+        return Response(r.response)
+        
 class ShowagentView(ViewSet):
     def create(self, request, format=None):
         id=request.data.get('id')
@@ -91,14 +104,83 @@ class Showsoptypes(ViewSet):
         r=rh.ResponseMsg(data=serializer.data,error=False,msg="ALL Sop types data show")
         return Response(r.response)
 
+    def create(self,request,format=None):
+        User=1
+        #User=request.user.id
+        Sop_name=request.data.get('Sop_name')
+        new_object=SOP_Types(Sop_name=Sop_name,User_id=User)
+        new_object.save()
+        r=rh.ResponseMsg(data={},error=False,msg="New SOP created")
+        return Response(r.response)
+    
+class Showsubsop(ViewSet):
+    def list(self,request,format=None):
+        obj=SOP.objects.all()
+        serializer= SOPserializer(obj, many=True)
+        r=rh.ResponseMsg(data=serializer.data,error=False,msg="ALL SOP sub type data show")
+        return Response(r.response)
+
+    def create(self,request, fromat=None):
+        sop_type_id=request.data.get("sop_type_id")
+        sop_sub_type=request.data.get("sub_sop")
+        new_object=SOP.objects.create(Sop_types_id=sop_type_id,Sop_sub_type=sop_sub_type)
+        new_object.save()
+        obj=SOP.objects.filter(id=new_object.id).first()
+        serializer= SOPserializer(obj)
+        r=rh.ResponseMsg(data=serializer.data,error=False,msg="New sub sop create successfully")
+        return Response(r.response)
+
+    def update(self, request, pk=None):
+        data=request.data
+        sub_sop=SOP.objects.filter(id=pk).first()
+        serializer = SOPserializer(sub_sop, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            r=rh.ResponseMsg(data={},error=False,msg="data of sub sop updated successfully")
+            return Response(r.response)
+        r=rh.ResponseMsg(data={},error=True,msg="data of sub sop not updated")
+        return Response(r.response)
+
+    def destroy(self, request, pk=None):
+        sub_sop=SOP.objects.filter(id=pk).first()
+        sub_sop.delete()
+        r=rh.ResponseMsg(data={},error=False,msg="record delete successfully")
+        return Response(r.response)
+
 class Showlob(ViewSet):
     def list(self,request,format=None):
         # obj=LOB.objects.filter(User__id=request.user.id)
-        obj=LOB.objects.all()
+        obj=LOB.objects.filter(User__id=1)
         serializer= LOBserializer(obj, many=True)
         r=rh.ResponseMsg(data=serializer.data,error=False,msg="ALL LOB data show")
         return Response(r.response)
 
+    def create(self,request, fromat=None):
+        User_id=1
+        #User_id=request.user.id
+        lob_name=request.data.get('lob_name')
+        new_object=LOB.objects.create(Lob_name=lob_name,User_id=User_id)
+        new_object.save()
+        r=rh.ResponseMsg(data={},error=False,msg="New LOB create successfully")
+        return Response(r.response)
+
+    def update(self, request, pk=None,*args, **kwargs):
+        # kwargs['partial'] = True
+        data=request.data
+        lob=LOB.objects.filter(id=pk).first()
+        serializer=LOBserializer(lob,data=data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            r=rh.ResponseMsg(data={},error=False,msg="data of lob updated successfully")
+            return Response(r.response)
+        r=rh.ResponseMsg(data={},error=True,msg="data of lob not updated")
+        return Response(r.response)
+        
+    def destroy(self, request, pk=None):
+        sub_sop=LOB.objects.filter(id=pk).first()
+        sub_sop.delete()
+        r=rh.ResponseMsg(data={},error=False,msg="record delete successfully")
+        return Response(r.response)
 class Showreporting(ViewSet):
     def list(self,request,format=None):
         # datas=Reporting.objects.filter(User__id=request.user.id).all()

@@ -13,7 +13,10 @@ import utils.response_handler as rh
 import random
 from auth_login.models import Reporting
 from auth_login.serializers import Reportingserializer
-from rest_framework.response import Response
+# from rest_framework_xml.parsers import XMLParser
+import xmltodict
+from urllib.request import urlopen
+import requests
 # Create your views here.
 
 es = Elasticsearch(
@@ -21,11 +24,11 @@ es = Elasticsearch(
     http_auth=(config("user"), config("password"))
 )
 
-def generator(df2):
+def generator(df2, index):
         try:
             for c, line in enumerate(df2):
                 yield{
-                    '_index':'quality_works',
+                    '_index':index,
                     '_doc_type':'test',
                     '_id': c,
                     '_source':line,
@@ -42,15 +45,41 @@ class elasticview(APIView):
         df = pd.read_json(file_obj)
         df["Keyword trends"] = df["Keyword trends"].replace(np.nan, 0)
         df2= df.to_dict('records')
-        generator(df2=df2)
+        # generator(df2=df2, index="quality_works")
         try:
-            res=helpers.bulk(es, generator(df2))
+            helpers.bulk(es, generator(df2,index="quality_works"))
             print("working")
             return Response({"msg":"success"})
         except Exception as e:
             print(e)
             return Response({"msg":"failed"})
+class xml_to_json(APIView):
+    def post(self, request, format=None):
+        file_obj=request.data.get('file')
+        # var_url =requests.get("https://b2fbb4e9e7419c26abfc058fc121da71bd7a7e80d309da9d:98c1929fdd453184896ef516b0d411378fc1bd4636f955b8api.exotel.com/v1/Accounts/thinclab1/Calls/301e58c2727277ec420a36dd0f98159p")
+        dictionary = xmltodict.parse(file_obj)
+        json_object = json.dumps(dictionary) 
+        return Response({'received data': dictionary})
 
+class classelasticview(APIView):
+    # parser_classes = [XMLParser]
+    def post(self,request, format=None):
+        # file_obj=request.data.get('file')
+        # print(file_obj)
+        es.indices.create(index='second', ignore=400)
+        print(es.ping())
+        # df = pd.read_json(file_obj)
+        # df["Keyword trends"] = df["Keyword trends"].replace(np.nan, 0)
+        df2= request.data.get('Call')
+        print(df2)
+        generator(df2=df2, index="second")
+        try:
+            res=helpers.bulk(es, generator(df2 , index="second"))
+            print("working")
+            return Response({"msg":"success"})
+        except Exception as e:
+            print(e)
+            return Response({"msg":"failed"})    
 class Allfilterview(APIView):
     def post(self,request,format=None):
         LOB_id=request.data.get('Lob_id')
