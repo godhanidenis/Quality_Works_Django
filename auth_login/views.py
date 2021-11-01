@@ -1,8 +1,10 @@
 from functools import partial
+import json
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 import jwt
+from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from .utils import token
 from rest_framework import exceptions
@@ -27,7 +29,7 @@ def loginview(request):
         access_token = token.generate_access_token(user)
         refresh_token = token.generate_refresh_token(user)
         response = Response()
-        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, max_age=7*24*60*60, samesite= None, secure=True)
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, samesite=None, secure=True, max_age=7*24*60*60)
         response.data = {
         "error":False,
         "data":{
@@ -71,21 +73,55 @@ class ShowteamView(ViewSet):
     def create(self, request, format=None):
         id=request.data.get('id')
         # datas=Teams.objects.filter(LOB__id=id, LOB__User__id=request.user.id).all()
-        datas=Teams.objects.filter(LOB__id=id, LOB__User__id=1).all()
+        datas=Teams.objects.filter(LOB__id=id,LOB__User__id=1).all()
         serializer=Teamserializer(datas, many=True)
         r=rh.ResponseMsg(data=serializer.data,error=False,msg="Teams data show")
         return Response(r.response)
            
-class CreateteamView(ViewSet):
+class ManageteamView(ViewSet):
+    def list(self,request,format=None):
+        obj=Teams.objects.all()
+        serializer=Teamserializer(obj, many=True)
+        r=rh.ResponseMsg(data=serializer.data,error=False,msg="Teams data Get Successfully")
+        return Response(r.response)
+
     def create(self, request, format=None):
         team_name=request.data.get("team_name")
         no_agents=request.data.get("no_agents")
         locations=request.data.get("locations")
         reporting_manager_id=request.data.get("reporting_manager_id")
-        lob_id=request.data.get("lob_id")
-        new_obj=Teams(Team_name=team_name,No_agentns=no_agents,Locations=locations,Reporting_Manager_id=reporting_manager_id,LOB_id=lob_id)
+        lob_id_list=request.data.get("lob_id_list")
+        # lob_id_list=json.loads(lob_id_list)
+        new_obj=Teams(Team_name=team_name,No_agentns=no_agents,Locations=locations,Reporting_manager_id=reporting_manager_id)
         new_obj.save()
+        for i in lob_id_list:
+            new_obj.LOB.add(str(i))
         r=rh.ResponseMsg(data={},error=False,msg="New Team Create Successfully!!")
+        return Response(r.response)
+
+    def update(self, request, pk=None):
+        team_name=request.data.get("Team_name")
+        lob_id_list=request.data.get("LOB")
+        reporting_manager=request.data.get("Reporting_manager")
+        location=request.data.get("Locations")
+        no_agents=request.data.get("No_agentns")
+        # lob_id_list=json.loads(lob_id_list)
+        obj=Teams.objects.filter(id=pk).first()
+        obj.Team_name=team_name
+        obj.No_agentns=no_agents
+        obj.Locations=location
+        obj.Reporting_manager=Reporting_Manager.objects.get(id=reporting_manager)
+        obj.LOB.set("")
+        for i in lob_id_list:
+            obj.LOB.add(str(i))
+        obj.save()
+        r=rh.ResponseMsg(data={}  ,error=True,msg="Team data updated succeessfully")
+        return Response(r.response)
+
+    def destroy(self, request, pk=None):
+        team=Teams.objects.filter(id=pk).first()
+        team.delete()
+        r=rh.ResponseMsg(data={},error=False,msg="Team record delete successfully")
         return Response(r.response)
         
 class ShowagentView(ViewSet):
@@ -165,10 +201,10 @@ class Showlob(ViewSet):
         return Response(r.response)
 
     def update(self, request, pk=None,*args, **kwargs):
-        # kwargs['partial'] = True
         data=request.data
         lob=LOB.objects.filter(id=pk).first()
         serializer=LOBserializer(lob,data=data,partial=True)
+        print(serializer)
         if serializer.is_valid():
             serializer.save()
             r=rh.ResponseMsg(data={},error=False,msg="data of lob updated successfully")
@@ -179,6 +215,8 @@ class Showlob(ViewSet):
     def destroy(self, request, pk=None):
         sub_sop=LOB.objects.filter(id=pk).first()
         sub_sop.delete()
+        # team_del=Teams.objects.filter(LOB__exact=None)
+        # team_del.delete()
         r=rh.ResponseMsg(data={},error=False,msg="record delete successfully")
         return Response(r.response)
 class Showreporting(ViewSet):
@@ -187,6 +225,13 @@ class Showreporting(ViewSet):
         datas=Reporting.objects.all()
         serializer=Reportingserializer(datas, many=True)
         r=rh.ResponseMsg(data=serializer.data,error=False,msg="ALL Reporting data shows")
+        return Response(r.response)
+
+class Showreportingmanager(ViewSet):
+    def list(self,request,format=None):
+        datas=Reporting_Manager.objects.all()
+        serializer=Reportingmanagerserialiazer(datas,many=True)
+        r=rh.ResponseMsg(data=serializer.data,error=False,msg="Reporting manager data show")
         return Response(r.response)
 
 class Showall(ViewSet):

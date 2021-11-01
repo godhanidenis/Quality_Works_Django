@@ -13,7 +13,6 @@ import utils.response_handler as rh
 import random
 from auth_login.models import Reporting
 from auth_login.serializers import Reportingserializer
-# from rest_framework_xml.parsers import XMLParser
 import xmltodict
 from urllib.request import urlopen
 import requests

@@ -14,22 +14,26 @@ class LOBserializer(serializers.ModelSerializer):
     def get_value_from_lob(self, lob):
         value=lob.id
         return value
-
+class Reportingmanagerserialiazer(serializers.ModelSerializer):
+    class Meta:
+        model=Reporting_Manager
+        fields="__all__"
 class Teamserializer(serializers.ModelSerializer):
-    LOB=LOBserializer()
+    Reporting_manager=Reportingmanagerserialiazer()
+    LOB=LOBserializer(many=True)
     label=serializers.SerializerMethodField('get_teamname_from_Team')
     value=serializers.SerializerMethodField('get_value_from_Team')
     class Meta:
         model=Teams
-        fields = ['id','Team_name','No_agentns','Locations','Reporting_manager','LOB','label','value']
+        fields = ['id','Team_name','No_agentns','Locations','Reporting_manager','LOB','label','value','Lob_list']
+        fields="__all__"
 
     def get_teamname_from_Team(self, team):
         label=team.Team_name
         return label
     def get_value_from_Team(self, team):
         value=team.id
-        return value
-          
+        return value         
 class Agentserializer(serializers.ModelSerializer):
     Team=Teamserializer()
     label=serializers.SerializerMethodField('get_agentname_from_Agent')
@@ -69,3 +73,4 @@ class SOPTypesserializer(serializers.ModelSerializer):
     class Meta:
         model=SOP_Types
         fields = ['id','User','Sop_name','Sop_sub_types']
+

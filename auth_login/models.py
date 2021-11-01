@@ -30,7 +30,7 @@ class Teams(models.Model):
     No_agentns= models.IntegerField()
     Locations= models.CharField(max_length=255)
     Reporting_manager= models.ForeignKey(Reporting_Manager, related_name='managers_for_teams', on_delete= models.CASCADE)
-    LOB = models.ForeignKey(LOB, related_name='lob_for_teams', on_delete=models.CASCADE)
+    LOB = models.ManyToManyField(LOB, related_name='lob_for_teams')
 
     def __str__(self):
         return self.Team_name
