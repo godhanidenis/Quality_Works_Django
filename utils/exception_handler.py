@@ -11,7 +11,6 @@ def custom_exception_handler(exc, context):
             'data':{},
             'message': exc.detail,
         }
-
         return Response(custom_response_data,status=response.status_code)
     else:
         return Response({

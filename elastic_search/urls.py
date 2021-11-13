@@ -4,7 +4,7 @@ from .views import *
 urlpatterns = [
     path('', elasticview.as_view()),
     path('class/', classelasticview.as_view()),
-    path('allfilter/', Allfilterview.as_view()),
+    path('allfilter/', Allfilterviewone.as_view()),
     path('softskill/', Softskillview.as_view()),
     path('process_knowledge/', Processknowledgeview.as_view()),
     path("sentiment/", Sentimentview.as_view()),

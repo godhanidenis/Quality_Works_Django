@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import Reporting_Manager, User,Teams, Agents, SOP_Types, SOP, LOB, Reporting
 
+admin.site.site_header = 'Quality_Works_Adminpanel'
+
 admin.site.register(User, UserAdmin)
 
 class Lobadmin(admin.ModelAdmin):

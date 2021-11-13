@@ -33,8 +33,19 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'auth_login',
-    'elastic_search'
+    'elastic_search',
+    'drf_yasg',
 ]
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -53,7 +64,7 @@ ROOT_URLCONF = 'qaulity_works.urls'
 CORS_ALLOWED_ORIGINS = (
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    "http://3.227.180.10",
+    "http://3.227.180.10"
 )
 CORS_ALLOW_CREDENTIALS = True
 
@@ -118,6 +129,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 REST_FRAMEWORK={
+    # 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'EXCEPTION_HANDLER': 'utils.exception_handler.custom_exception_handler',
     # 'DEFAULT_PERMISSION_CLASSES': [
     #      'rest_framework.permissions.IsAuthenticated',
@@ -126,6 +138,7 @@ REST_FRAMEWORK={
     #     'auth_login.utils.authentication.SafeJWTAuthentication',
     # ),
 }
+
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')

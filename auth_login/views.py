@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 import jwt
 from rest_framework.serializers import Serializer
-from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from .utils import token
 from rest_framework import exceptions
 import utils.response_handler as rh
@@ -15,6 +15,8 @@ from decouple import config
 from .models import *
 from .serializers import *
 from rest_framework.viewsets import ViewSet
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 User = get_user_model()
 
@@ -70,8 +72,13 @@ def refresh_token_view(request):
     return Response(r.response)
 
 class ShowteamView(ViewSet):
+    token_param_config = openapi.Parameter(
+        'id', in_=openapi.IN_QUERY, description='integer', type=openapi.TYPE_INTEGER)
+
+    @swagger_auto_schema(manual_parameters=[token_param_config])
     def create(self, request, format=None):
         id=request.data.get('id')
+        print("Id:",id)
         # datas=Teams.objects.filter(LOB__id=id, LOB__User__id=request.user.id).all()
         datas=Teams.objects.filter(LOB__id=id,LOB__User__id=1).all()
         serializer=Teamserializer(datas, many=True)
